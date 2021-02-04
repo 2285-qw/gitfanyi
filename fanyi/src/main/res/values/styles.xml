@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="my_dialog" parent="android:style/Theme.Dialog">
+        <item name="android:background">@color/white</item>
+        <item name="android:windowBackground">#00FFFFFF</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+</resources>

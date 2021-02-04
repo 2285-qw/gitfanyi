@@ -1,0 +1,7 @@
+include ':view'
+include ':myapplication'
+include ':translate'
+include ':sqlorm'
+include ':spinner'
+include ':fanyi'
+rootProject.name = "fanyi"
