@@ -2,6 +2,7 @@ package com.example.translatehuihaoda.fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.translatehuihaoda.MainActivity;
 import com.example.translatehuihaoda.R;
+import com.example.translatehuihaoda.ui.HideActivity;
+import com.example.translatehuihaoda.ui.User_agreementActivity;
 import com.example.translatehuihaoda.utils.SQL;
 import com.example.translatehuihaoda.utils.TestModel;
 import com.example.translatehuihaoda.utils.UtilTools;
@@ -37,6 +41,10 @@ public class RecentFragment extends Fragment implements View.OnClickListener {
     private TextView textView;
     //清除历史缓存布局
     private LinearLayout li_del;
+    //隐私政策
+    private TextView conceal;
+    //用户协议
+    private  TextView user;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -45,13 +53,27 @@ public class RecentFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         //设置字体
         textView=view.findViewById(R.id.textView);
         UtilTools.setFont(getActivity().getBaseContext(),textView,"fonts/DIN-Medium.otf");
 
+        conceal=view.findViewById(R.id.conceal);
+        user=view.findViewById(R.id.user);
+
+        conceal.setOnClickListener(this);
+        user.setOnClickListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         //显示历史记录
         SQL.sql_translate();
@@ -104,6 +126,13 @@ public class RecentFragment extends Fragment implements View.OnClickListener {
 
 
                 break;
+            case R.id.conceal:
+                startActivity(new Intent(getActivity(), HideActivity.class));
+                break;
+            case R.id.user:
+                startActivity(new Intent(getActivity(), User_agreementActivity.class));
+                break;
         }
     }
+
 }

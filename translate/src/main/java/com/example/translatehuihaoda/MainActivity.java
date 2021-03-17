@@ -57,9 +57,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private ImageView main_back;
     //图片循环整数
     private int i=0;
-    //隐私政策
-    private TextView policy;
-
     //Banner广告布局
     private FrameLayout mBannerContainer;
     //
@@ -79,6 +76,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         Log.d("sha1",getSha1(this));
 
+        //添加广告
         mBannerContainer=findViewById(R.id.banner_container);
         //step2:创建TTAdNative对象
         mTTAdNative = TTAdManagerHolder.get().createAdNative(this);
@@ -93,24 +91,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initDate() {
-        policy=findViewById(R.id.policy);
-        policy.setOnClickListener(this);
-        policy.setVisibility(View.GONE);
+
+
         mtitle=new ArrayList<>();
         mtitle.add(getString(R.string.translate));
         mtitle.add(getString(R.string.Recent));
 
         mfragment=new ArrayList<>();
-        mfragment.add(new  TranslateFragment());
+        mfragment.add(new TranslateFragment());
         mfragment.add(new RecentFragment());
 
         log=findViewById(R.id.log);
         log.setOnClickListener(this);
-        //设置控件大小
-//        RelativeLayout.LayoutParams linearParams =(RelativeLayout.LayoutParams) log.getLayoutParams();
-//        linearParams.width=((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()));
-//        linearParams.height=((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()));
-//        log.setLayoutParams(linearParams);
 
         main_back=findViewById(R.id.main_back);
     }
@@ -135,7 +127,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void onPageSelected(int position) {
                 if (position==0){
-                    policy.setVisibility(View.GONE);
                     log.setVisibility(View.VISIBLE);
                     main_back.setImageDrawable(getResources().getDrawable(R.mipmap.mian_barck1));
 
@@ -143,7 +134,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }else {
                     log.setVisibility(View.GONE);
                     main_back.setImageDrawable(getResources().getDrawable(R.mipmap.main_r_back));
-                    policy.setVisibility(View.VISIBLE);
                     //Banner广告
                     mBannerContainer.setVisibility(View.VISIBLE);
                     BannerUtil.loadBannerAd(StaticClass.BANNERID,mTTAdNative,MainActivity.this,mBannerContainer);
@@ -194,9 +184,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         R.mipmap.log5,R.mipmap.log6,R.mipmap.log7,R.mipmap.log8,R.mipmap.log9,R.mipmap.logo};
                 log.setImageResource(s[++i%s.length]);
                 break;
-            case R.id.policy:
-                startActivity(new Intent(MainActivity.this, HideActivity.class));
-                break;
+
         }
     }
 }
