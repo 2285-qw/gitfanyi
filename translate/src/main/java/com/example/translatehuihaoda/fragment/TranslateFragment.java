@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -29,8 +30,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.example.translatehuihaoda.R;
+import com.example.translatehuihaoda.config.TTAdManagerHolder;
+import com.example.translatehuihaoda.utils.BannerUtil;
 import com.example.translatehuihaoda.utils.SQL;
+import com.example.translatehuihaoda.utils.StaticClass;
 import com.example.translatehuihaoda.utils.TransApi;
 import com.example.translatehuihaoda.utils.UtilTools;
 
@@ -105,6 +110,11 @@ public class TranslateFragment extends Fragment implements View.OnClickListener 
     View view1;
     private Context mContext;
 
+    //Banner广告布局
+    private static FrameLayout mBannerContainer;
+    //
+    static TTAdNative mTTAdNative;
+
 
     @Nullable
     @Override
@@ -118,18 +128,30 @@ public class TranslateFragment extends Fragment implements View.OnClickListener 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.mContext = getActivity().getBaseContext();
+    }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
+        //初始化spinner
+        initSpinner();
+        //初始化View
+        initView();
 
+        //添加广告
+        mBannerContainer = view.findViewById(R.id.banner_container1);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        //初始化spinner
-        initSpinner();
-        //初始化View
-        initView();
+
+
+        mTTAdNative = TTAdManagerHolder.get().createAdNative(getActivity());
+        //初始化广告
+        BannerUtil.loadBannerAd(StaticClass.BANNERID, mTTAdNative, getActivity(), mBannerContainer);
+
 
         //显示隐藏键盘上的三个按钮
         text.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -145,14 +167,14 @@ public class TranslateFragment extends Fragment implements View.OnClickListener 
                 int screenHeight = getActivity().getWindow().getDecorView().getRootView().getHeight();
                 //此处就是用来获取键盘的高度的， 在键盘没有弹出的时候 此高度为0 键盘弹出的时候为一个正数
 
-                if (hasNavBar(mContext)){
-                    int heightDifference = screenHeight - r.bottom-getNavigationBarHeight(mContext);
-                    System.out.println(measuredHeight+":"+ r.bottom+":"+hasNavBar(mContext));
+                if (hasNavBar(mContext)) {
+                    int heightDifference = screenHeight - r.bottom - getNavigationBarHeight(mContext);
+                    System.out.println(measuredHeight + ":" + r.bottom + ":" + hasNavBar(mContext));
                     Log.d("Keyboard Size", "Size: " + heightDifference);
                     showAViewOverKeyBoard(heightDifference);
-                }else {
+                } else {
                     int heightDifference = screenHeight - r.bottom;
-                    System.out.println(measuredHeight+":"+ r.bottom+":"+hasNavBar(mContext));
+                    System.out.println(measuredHeight + ":" + r.bottom + ":" + hasNavBar(mContext));
                     Log.d("Keyboard Size", "Size: " + heightDifference);
                     showAViewOverKeyBoard(heightDifference);
                 }
@@ -176,6 +198,7 @@ public class TranslateFragment extends Fragment implements View.OnClickListener 
         }
         return result;
     }
+
     /**
      * 检查是否存在虚拟按键栏
      *
@@ -222,7 +245,7 @@ public class TranslateFragment extends Fragment implements View.OnClickListener 
     }
 
     private void showAViewOverKeyBoard(int heightDifference) {
-        RelativeLayout buttom_button=view.findViewById(R.id.buttom_button);
+        RelativeLayout buttom_button = view.findViewById(R.id.buttom_button);
         if (heightDifference > 0) {//显示
             if (view1 == null) {//第一次显示的时候创建  只创建一次
                 view1 = View.inflate(mContext, R.layout.bt_item1, null);
@@ -234,9 +257,9 @@ public class TranslateFragment extends Fragment implements View.OnClickListener 
                 //翻译按钮
                 button = view1.findViewById(R.id.button3);
                 button.setOnClickListener(this);
-                bt_cancel=view1.findViewById(R.id.button1);
+                bt_cancel = view1.findViewById(R.id.button1);
                 bt_cancel.setOnClickListener(this);
-                bt_clear=view1.findViewById(R.id.button2);
+                bt_clear = view1.findViewById(R.id.button2);
                 bt_clear.setOnClickListener(this);
 
             }
@@ -253,19 +276,19 @@ public class TranslateFragment extends Fragment implements View.OnClickListener 
     }
 
     private void initView() {
-        bu_1=view.findViewById(R.id.bu_1);
-        bu_2=view.findViewById(R.id.bu_2);
+        bu_1 = view.findViewById(R.id.bu_1);
+        bu_2 = view.findViewById(R.id.bu_2);
 
         text = view.findViewById(R.id.text);
         textView = view.findViewById(R.id.textView);
-        rl_root=view.findViewById(R.id.rl_root);
-        text_copy=view.findViewById(R.id.copy);
+        rl_root = view.findViewById(R.id.rl_root);
+        text_copy = view.findViewById(R.id.copy);
         text_copy.setOnClickListener(this);
-        clear=view.findViewById(R.id.clear);
+        clear = view.findViewById(R.id.clear);
         clear.setOnClickListener(this);
 
-        UtilTools.setFont(mContext,textView,"fonts/DIN-Medium.otf");
-        UtilTools.setFont(mContext,text,"fonts/DIN-Medium.otf");
+        UtilTools.setFont(mContext, textView, "fonts/DIN-Medium.otf");
+        UtilTools.setFont(mContext, text, "fonts/DIN-Medium.otf");
     }
 
     //判断网络连接是否正常
@@ -282,44 +305,44 @@ public class TranslateFragment extends Fragment implements View.OnClickListener 
     }
 
     private void inTranslate(String query) {
-        if (isNetworkConnected(mContext)){
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
+        if (isNetworkConnected(mContext)) {
+            new Thread() {
+                @Override
+                public void run() {
+                    super.run();
 
-                TransApi transApi = new TransApi("20201214000647120", "sZ8fYFGkFXkgkpxLsoj2");
-                String transResult = transApi.getTransResult(query, sp_from, sp_to);
+                    TransApi transApi = new TransApi("20201214000647120", "sZ8fYFGkFXkgkpxLsoj2");
+                    String transResult = transApi.getTransResult(query, sp_from, sp_to);
 
-                System.out.println(transResult);
+                    System.out.println(transResult);
 
-                try {
-                    JSONObject JSON = new JSONObject(transResult);
-                    JSONArray opt = JSON.optJSONArray("trans_result");
+                    try {
+                        JSONObject JSON = new JSONObject(transResult);
+                        JSONArray opt = JSON.optJSONArray("trans_result");
 
-                    JSONObject jsonby = opt.getJSONObject(0);
-                    //获得译文
-                    Object opt2 = jsonby.optString("dst");
-                    //System.out.println(opt2);
+                        JSONObject jsonby = opt.getJSONObject(0);
+                        //获得译文
+                        Object opt2 = jsonby.optString("dst");
+                        //System.out.println(opt2);
 
-                    Log.d("TAG",(String)opt2);
-                    //将数据存入数据库
-                    SQL.sql_add(query, (String) opt2);
-                    //刷新list集合
-                    SQL.sql_translate();
-                    //返回数据修改UI
-                    Message message = new Message();
-                    message.what = 1;
-                    message.obj = opt2;
-                    handler.sendMessage(message);
+                        Log.d("TAG", (String) opt2);
+                        //将数据存入数据库
+                        SQL.sql_add(query, (String) opt2);
+                        //刷新list集合
+                        SQL.sql_translate();
+                        //返回数据修改UI
+                        Message message = new Message();
+                        message.what = 1;
+                        message.obj = opt2;
+                        handler.sendMessage(message);
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                 }
-
-            }
-        }.start();
-        }else {
+            }.start();
+        } else {
             Toast.makeText(mContext, "请检查网络连接是否正常", Toast.LENGTH_SHORT).show();
         }
     }
@@ -329,9 +352,9 @@ public class TranslateFragment extends Fragment implements View.OnClickListener 
         spinner1 = (Spinner) view.findViewById(R.id.spinner1);
         spinner2 = (Spinner) view.findViewById(R.id.spinner2);
 
-       View view2=View.inflate(mContext,R.layout.simple_spinner_item,null);
-       TextView text1=view2.findViewById(R.id.text1);
-       UtilTools.setFont(mContext,text1,"fonts/FONT.TTF");
+        View view2 = View.inflate(mContext, R.layout.simple_spinner_item, null);
+        TextView text1 = view2.findViewById(R.id.text1);
+        UtilTools.setFont(mContext, text1, "fonts/FONT.TTF");
 
         //spinner1数据
         data_list = new ArrayList<String>();
@@ -357,7 +380,7 @@ public class TranslateFragment extends Fragment implements View.OnClickListener 
 
 
         //spinner1适配器
-        arr_adapter = new ArrayAdapter<String>(getActivity().getBaseContext(),R.layout.simple_spinner_item, data_list);
+        arr_adapter = new ArrayAdapter<String>(getActivity().getBaseContext(), R.layout.simple_spinner_item, data_list);
         arr_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //加载适配器
         spinner1.setAdapter(arr_adapter);
@@ -409,7 +432,7 @@ public class TranslateFragment extends Fragment implements View.OnClickListener 
                 if (!String.valueOf(text.getText()).isEmpty()) {
                     String s = String.valueOf(text.getText()).replaceAll("\r|\n", " ");
                     inTranslate(s);
-                    Log.d("TAG",s);
+                    Log.d("TAG", s);
                     //隐藏键盘
                     UtilTools.Hide_key(getActivity());
                 } else {
@@ -426,14 +449,13 @@ public class TranslateFragment extends Fragment implements View.OnClickListener 
                 textView.setText(null);
                 break;
             case R.id.copy:
-                if (!textView.getText().toString().trim().isEmpty()){
-                    UtilTools.text_copy(getActivity(),textView.getText().toString().trim());
+                if (!textView.getText().toString().trim().isEmpty()) {
+                    UtilTools.text_copy(getActivity(), textView.getText().toString().trim());
                     Toast.makeText(mContext, "复制成功", Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     Toast.makeText(mContext, "没有可复制的文本", Toast.LENGTH_SHORT).show();
                 }
                 break;
-
 
 
         }

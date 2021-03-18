@@ -1,6 +1,7 @@
 package com.example.translatehuihaoda.fragment;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,11 +19,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.translatehuihaoda.MainActivity;
+import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.example.translatehuihaoda.R;
+import com.example.translatehuihaoda.config.TTAdManagerHolder;
 import com.example.translatehuihaoda.ui.HideActivity;
 import com.example.translatehuihaoda.ui.User_agreementActivity;
+import com.example.translatehuihaoda.utils.BannerUtil;
 import com.example.translatehuihaoda.utils.SQL;
+import com.example.translatehuihaoda.utils.StaticClass;
 import com.example.translatehuihaoda.utils.TestModel;
 import com.example.translatehuihaoda.utils.UtilTools;
 import com.example.translatehuihaoda.utils.lv_Adapter;
@@ -45,6 +50,11 @@ public class RecentFragment extends Fragment implements View.OnClickListener {
     private TextView conceal;
     //用户协议
     private  TextView user;
+    //Banner广告布局
+    private static FrameLayout mBannerContainer;
+    //
+    static TTAdNative mTTAdNative;
+     Context context=getContext();
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -52,10 +62,6 @@ public class RecentFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -69,6 +75,12 @@ public class RecentFragment extends Fragment implements View.OnClickListener {
 
         conceal.setOnClickListener(this);
         user.setOnClickListener(this);
+
+        //添加广告
+        mBannerContainer=view.findViewById(R.id.banner_container);
+
+
+
     }
 
     @Override
@@ -92,8 +104,17 @@ public class RecentFragment extends Fragment implements View.OnClickListener {
         listView.setAdapter(new lv_Adapter(getActivity().getBaseContext()));
 
         UtilTools.setFont_button(getActivity().getBaseContext(),bu_del,"fonts/DIN-Light.otf");
+
+
+        mTTAdNative = TTAdManagerHolder.get().createAdNative(getActivity());
+        //初始化广告
+        BannerUtil.loadBannerAd(StaticClass.BANNERID1,mTTAdNative,getActivity(),mBannerContainer);
+
     }
 
+    public static void ad(){
+
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -135,4 +156,16 @@ public class RecentFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        BannerUtil.loadBannerAd(StaticClass.BANNERID1,mTTAdNative,getActivity(),mBannerContainer);
+        super.onHiddenChanged(hidden);
+        if (hidden) {
+            //隐藏
+        } else {
+            //显示
+            //初始化广告
+
+        }
+    }
 }

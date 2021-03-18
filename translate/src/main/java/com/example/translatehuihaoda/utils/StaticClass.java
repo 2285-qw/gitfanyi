@@ -22,5 +22,7 @@ public class StaticClass {
     public static final String SPALSHID="887432347";
     //Banner广告位id
     public static final String BANNERID="945812911";
+    //Banner广告位id
+    public static final String BANNERID1="945812759";
 
 }
