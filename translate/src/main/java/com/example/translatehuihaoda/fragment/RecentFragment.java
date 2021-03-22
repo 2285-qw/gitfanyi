@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -24,6 +25,7 @@ import com.example.translatehuihaoda.R;
 import com.example.translatehuihaoda.config.TTAdManagerHolder;
 import com.example.translatehuihaoda.ui.HideActivity;
 import com.example.translatehuihaoda.ui.User_agreementActivity;
+import com.example.translatehuihaoda.ui.WebViewactivity;
 import com.example.translatehuihaoda.utils.BannerUtil;
 import com.example.translatehuihaoda.utils.SQL;
 import com.example.translatehuihaoda.utils.StaticClass;
@@ -148,10 +150,12 @@ public class RecentFragment extends Fragment implements View.OnClickListener {
 
                 break;
             case R.id.conceal:
-                startActivity(new Intent(getActivity(), HideActivity.class));
+                WebViewactivity.openActivity(getActivity(),"http://huihaoda.cn/yinsi/fy.html");
+                //startActivity(new Intent(getActivity(), HideActivity.class));
                 break;
             case R.id.user:
-                startActivity(new Intent(getActivity(), User_agreementActivity.class));
+                WebViewactivity.openActivity(getActivity(),"http://huihaoda.cn/yhxy/fs.html");
+                //startActivity(new Intent(getActivity(), User_agreementActivity.class));
                 break;
         }
     }

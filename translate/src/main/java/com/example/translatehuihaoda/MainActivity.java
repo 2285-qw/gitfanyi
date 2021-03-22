@@ -58,9 +58,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         initDate();
         //初始化View
         initView();
-
         Log.d("sha1", getSha1(this));
-
 
     }
 

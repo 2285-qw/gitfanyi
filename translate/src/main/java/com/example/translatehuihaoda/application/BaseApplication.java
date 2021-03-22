@@ -42,7 +42,7 @@ public class BaseApplication extends Application {
         //调试 log
         //UMConfigure.setLogEnabled(true);
         //初始化sdk
-        UMConfigure.init(this,"5fed889744bb94418a6dbb1e", "yunhao", UMConfigure.DEVICE_TYPE_PHONE,null);
+        UMConfigure.init(this, "5fed889744bb94418a6dbb1e", "HUAWEI", UMConfigure.DEVICE_TYPE_PHONE, null);
         //页面采集模式
         MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.AUTO);
     }
